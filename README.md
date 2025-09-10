@@ -133,6 +133,7 @@ This will:
 - Collect up to 30 news items per topic
 - Apply date filters based on topic groups (Politics: 2 days, Technology: 4 days, Science/Health: 7 days)
 - Save results to `news_agent/agents/news/output/`
+- output will also be copied to `news-site/src/data/news.yaml` for deployment - This is controlled via `news_agent.news_dest_file` option in the config file
 
 ### Programmatic Usage
 
@@ -155,6 +156,7 @@ The system generates YAML files containing:
 ## Project Structure
 
 ```text
+news-site/                     # For deployment of news site
 news_agent/
 ├── agents/
 │   └── news/

@@ -1,0 +1,199 @@
+---
+import type { NewsItem } from '~/utils/loadNewsData';
+import { slugify } from '~/utils/loadNewsData';
+import { formatDistanceToNow, format } from 'date-fns';
+
+export interface Props {
+  item: NewsItem;
+  index?: number;
+  groupName?: string;
+}
+
+const { item, index = 0, groupName } = Astro.props;
+
+function formatDate(dateString: string): string {
+  try {
+    const date = new Date(dateString);
+    return format(date, 'MMM d, yyyy');
+  } catch {
+    return dateString;
+  }
+}
+
+function getRelativeTime(dateString: string): string {
+  try {
+    const date = new Date(dateString);
+    return formatDistanceToNow(date, { addSuffix: true });
+  } catch {
+    return formatDate(dateString);
+  }
+}
+
+function getDateColor(dateString: string): string {
+  try {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (diffInDays === 0) {
+      return 'text-green'; // Today - green
+    } else if (diffInDays === 1) {
+      return 'text-blue'; // Yesterday - blue
+    } else if (diffInDays < 7) {
+      return 'text-blue'; // This week - blue
+    } else {
+      return 'text-foreground/60'; // Older - muted
+    }
+  } catch {
+    return 'text-foreground/60';
+  }
+}
+
+function getDomainFromUrl(url: string): string {
+  try {
+    const domain = new URL(url).hostname;
+    return domain.replace('www.', '');
+  } catch {
+    return url;
+  }
+}
+
+
+---
+
+<article
+  class="bg-background border border-foreground/10 rounded-xl shadow-sm p-6 mb-6 hover:shadow-lg hover:border-accent/20 transition-all duration-200 news-item"
+>
+  <!-- Date -->
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex flex-col">
+      <time class={`text-sm font-semibold ${getDateColor(item.published_date)}`}>
+        {getRelativeTime(item.published_date)}
+      </time>
+      <time class="text-xs text-foreground/50">
+        {formatDate(item.published_date)}
+      </time>
+    </div>
+    <div class="text-xs text-foreground/50">
+      {item.sources.length} source{item.sources.length !== 1 ? 's' : ''}
+    </div>
+  </div>
+
+  <!-- Content area (no longer clickable for entire area) -->
+  <div class="content-area">
+    <!-- Title -->
+    <h3 class="text-lg font-semibold text-heading1 mb-2 leading-tight">
+      {item.title}
+    </h3>
+
+    <!-- Group information - show all groups this item belongs to -->
+    {item.groups && item.groups.length > 0 && (
+      <div class="mb-3">
+        <div class="flex flex-wrap gap-1">
+          {item.groups.map((group) => (
+            <a
+              href={`#group-${slugify(group)}`}
+              class="group-tag inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-accent/10 text-accent hover:bg-accent/20 hover:text-accent transition-colors duration-150 cursor-pointer"
+              data-group={group}
+            >
+              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.997 1.997 0 013 12V7a2 2 0 012-2z"></path>
+              </svg>
+              {group}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Summary -->
+    <div class="prose prose-sm max-w-none mb-4">
+      <p class="text-foreground/80 leading-relaxed">
+        {item.summary}
+      </p>
+    </div>
+  </div>
+
+  <!-- Sources -->
+  <div class="border-t border-separator pt-4">
+    <h4 class="text-xs font-medium text-foreground/60 uppercase tracking-wide mb-2">
+      Sources
+    </h4>
+    <div class="flex flex-wrap gap-2">
+      {item.sources.map((source) => (
+        <a
+          href={source}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="source-link inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-link/10 text-link hover:bg-link/20 transition-colors duration-150"
+        >
+          <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+          </svg>
+          {getDomainFromUrl(source)}
+        </a>
+      ))}
+    </div>
+  </div>
+</article>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Stop event propagation for source links
+    document.querySelectorAll('.source-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    });
+
+    // Enhanced navigation for group tags
+    document.querySelectorAll('.group-tag').forEach((anchor) => {
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        const href = (anchor as HTMLAnchorElement).getAttribute('href');
+
+        if (href) {
+          const target = document.querySelector(href);
+          if (target) {
+            // Calculate responsive offset based on screen size
+            const isMobile = window.innerWidth < 1024; // lg breakpoint
+            const offset = isMobile ? 20 : 80; // Much smaller offset on mobile
+
+            const elementPosition = target.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+
+            // Update URL
+            history.pushState(null, '', href);
+
+            // Removed temporary highlight effect
+          }
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  /* Remove all animations - static display only */
+  .news-item {
+    opacity: 1;
+    transform: none;
+  }
+
+  .prose p {
+    text-align: justify;
+    hyphens: auto;
+  }
+
+  .content-area {
+    /* Remove hover effects since content is no longer clickable */
+  }
+
+
+</style>

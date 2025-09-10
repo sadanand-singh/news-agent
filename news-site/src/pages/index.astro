@@ -1,0 +1,283 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Sidebar from '~/components/Sidebar.astro';
+import NewsGroup from '~/components/NewsGroup.astro';
+import { loadNewsData, getAllUniqueGroups, getNewsByGroups, slugify } from '~/utils/loadNewsData';
+
+// Load and process news data
+const newsData = loadNewsData();
+const uniqueGroups = getAllUniqueGroups(newsData);
+const groupedNews = getNewsByGroups(newsData);
+
+// Sort groups by number of articles (descending)
+const sortedGroupEntries = Object.entries(groupedNews).sort((a, b) =>
+  b[1].length - a[1].length
+);
+
+// Get total article count
+const totalArticles = Object.values(groupedNews).reduce((sum, items) => sum + items.length, 0);
+---
+
+<Layout title="Latest Technology, Science & Global News" groups={uniqueGroups}>
+  <div class="min-h-screen">
+    <!-- Sidebar - only visible on large screens -->
+    <Sidebar groups={uniqueGroups} />
+
+    <!-- Main Content -->
+    <main class="lg:ml-64 relative">
+      <div class="px-4 sm:px-6 lg:px-8 py-4 lg:py-8">
+        <div class="space-y-8">
+        <!-- Header Section -->
+        <section id="top" class="mb-12 text-center">
+          <div class="mb-6">
+            <h1 class="text-4xl font-bold text-heading1 mb-4">
+              Latest News & Updates
+            </h1>
+            <p class="text-lg text-foreground/70 mb-6 max-w-3xl mx-auto">
+              Stay informed with curated news from technology, science, business, and global events.
+              Updated daily with the most important stories across various domains.
+            </p>
+            <div class="flex flex-wrap gap-4 justify-center items-center text-sm text-foreground/60">
+              <div class="flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3v6m0 0l3-3m-3 3L9 9"></path>
+                </svg>
+                {totalArticles} articles
+              </div>
+              <div class="flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.997 1.997 0 013 12V7a2 2 0 012-2z"></path>
+                </svg>
+                {Object.keys(groupedNews).length} topics
+              </div>
+              <div class="flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Last updated: {new Date().toLocaleDateString()}
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Navigation -->
+          <div class="bg-background border border-separator rounded-xl shadow-sm p-4">
+            <h2 class="text-sm font-medium text-foreground/70 mb-3">Quick Navigation</h2>
+            <div id="quick-nav-container" class="flex flex-wrap gap-2">
+              <!-- Initial visible groups -->
+              <div id="initial-groups" class="flex flex-wrap gap-2">
+                {uniqueGroups.slice(0, 8).map((group) => (
+                  <a
+                    href={`#group-${slugify(group)}`}
+                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-foreground/10 text-foreground hover:bg-accent hover:text-background transition-colors duration-150"
+                    data-group={group}
+                  >
+                    {group}
+                  </a>
+                ))}
+              </div>
+
+              <!-- Hidden groups (initially hidden) -->
+              {uniqueGroups.length > 8 && (
+                <div id="hidden-groups" class="hidden flex flex-wrap gap-2">
+                  {uniqueGroups.slice(8).map((group) => (
+                    <a
+                      href={`#group-${slugify(group)}`}
+                      class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-foreground/10 text-foreground hover:bg-accent hover:text-background transition-colors duration-150"
+                      data-group={group}
+                    >
+                      {group}
+                    </a>
+                  ))}
+                </div>
+              )}
+
+              <!-- Toggle button -->
+              {uniqueGroups.length > 8 && (
+                <button
+                  id="toggle-groups-btn"
+                  class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-foreground/50 hover:text-foreground/70 transition-colors duration-150 cursor-pointer"
+                >
+                  <span id="toggle-text">+{uniqueGroups.length - 8} more</span>
+                  <svg id="toggle-icon" class="w-3 h-3 ml-1 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </button>
+              )}
+            </div>
+          </div>
+        </section>
+
+        <!-- News Groups -->
+        <div class="space-y-12" id="news-groups-container">
+          {sortedGroupEntries.map(([groupName, newsItems]) => (
+            <NewsGroup
+              groupName={groupName}
+              newsItems={newsItems}
+            />
+          ))}
+        </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Back to top button -->
+  <button
+    id="back-to-top"
+    class="fixed bottom-8 right-8 bg-accent text-background p-3 rounded-full shadow-lg hover:bg-accent/90 transition-all duration-200 transform scale-0"
+    aria-label="Back to top"
+  >
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+    </svg>
+  </button>
+</Layout>
+
+<script>
+  // Back to top functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const backToTopButton = document.getElementById('back-to-top');
+
+    if (backToTopButton) {
+      // Show/hide back to top button based on scroll position
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+          backToTopButton.classList.remove('scale-0');
+          backToTopButton.classList.add('scale-100');
+        } else {
+          backToTopButton.classList.remove('scale-100');
+          backToTopButton.classList.add('scale-0');
+        }
+      });
+
+      // Smooth scroll to top
+      backToTopButton.addEventListener('click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+    }
+
+    // Remove progressive loading animations to prevent jumping
+    // All content loads immediately without animation
+
+    // Toggle groups functionality
+    const toggleButton = document.getElementById('toggle-groups-btn');
+    const hiddenGroups = document.getElementById('hidden-groups');
+    const toggleText = document.getElementById('toggle-text');
+    const toggleIcon = document.getElementById('toggle-icon');
+
+    if (toggleButton && hiddenGroups && toggleText && toggleIcon) {
+      let isExpanded = false;
+
+      toggleButton.addEventListener('click', () => {
+        isExpanded = !isExpanded;
+
+        if (isExpanded) {
+          // Show hidden groups with animation
+          hiddenGroups.classList.remove('hidden');
+          hiddenGroups.style.opacity = '0';
+          hiddenGroups.style.transform = 'translateY(-10px)';
+
+          // Animate in
+          requestAnimationFrame(() => {
+            hiddenGroups.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+            hiddenGroups.style.opacity = '1';
+            hiddenGroups.style.transform = 'translateY(0)';
+          });
+
+          // Update button
+          toggleText.textContent = 'Show less';
+          toggleIcon.style.transform = 'rotate(180deg)';
+        } else {
+          // Hide groups with animation
+          hiddenGroups.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+          hiddenGroups.style.opacity = '0';
+          hiddenGroups.style.transform = 'translateY(-10px)';
+
+          // Hide after animation
+          setTimeout(() => {
+            hiddenGroups.classList.add('hidden');
+          }, 300);
+
+          // Update button
+          const hiddenCount = hiddenGroups.children.length;
+          toggleText.textContent = `+${hiddenCount} more`;
+          toggleIcon.style.transform = 'rotate(0deg)';
+        }
+      });
+    }
+
+    // Enhanced navigation for Quick Navigation links
+    document.querySelectorAll('#quick-nav-container a[href^="#group-"]').forEach((anchor) => {
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        const href = (anchor as HTMLAnchorElement).getAttribute('href');
+
+        if (href) {
+          const target = document.querySelector(href);
+          if (target) {
+            // Calculate responsive offset based on screen size
+            const isMobile = window.innerWidth < 1024; // lg breakpoint
+            const offset = isMobile ? 20 : 80; // Much smaller offset on mobile
+
+            const elementPosition = target.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+
+            // Update URL
+            history.pushState(null, '', href);
+
+            // Removed temporary highlight effect
+          }
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  /* Animations disabled to prevent jumping */
+
+  /* Smooth scrolling for the entire page */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom scrollbar for webkit browsers */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+  }
+
+  /* Additional group animations */
+  #hidden-groups {
+    will-change: opacity, transform;
+  }
+
+  /* Removed sidebar gradient edge */
+
+  /* Prevent layout shifts during loading */
+  #news-groups-container {
+    min-height: 100vh;
+  }
+
+  /* Removed highlight effect */
+</style>

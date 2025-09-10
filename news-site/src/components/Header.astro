@@ -1,0 +1,75 @@
+---
+import ThemeToggle from '~/components/ThemeToggle.astro';
+
+interface Props {
+  groups?: string[]
+}
+
+const { groups = [] } = Astro.props
+---
+
+<!-- Header - only visible on small screens -->
+<header class="lg:hidden sticky top-0 z-30 flex items-center justify-between py-4 border-b border-separator bg-background">
+  <div class="flex items-center">
+    <a
+      href="/"
+      class="text-xl font-bold text-heading1 hover:text-accent transition-colors no-underline"
+    >
+      📰 News Site
+    </a>
+  </div>
+
+  <!-- Mobile controls -->
+  <div class="flex items-center gap-3">
+    <!-- Theme toggle -->
+    <ThemeToggle />
+
+    <!-- Mobile category selector -->
+    <div class="relative">
+      <select
+        id="mobile-category-select"
+        class="bg-background border border-separator rounded-lg px-3 py-2 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent appearance-none pr-8"
+      >
+        <option value="">All Categories</option>
+        {groups.map((group) => (
+          <option value={group}>{group}</option>
+        ))}
+      </select>
+      <svg class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-foreground/60 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const categorySelect = document.getElementById('mobile-category-select') as HTMLSelectElement;
+
+    if (categorySelect) {
+      categorySelect.addEventListener('change', (e) => {
+        const selectedCategory = (e.target as HTMLSelectElement).value;
+
+        if (selectedCategory) {
+          // Scroll to the selected category section
+          // Using the same slugify logic as the backend
+          const targetId = `group-${selectedCategory.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`;
+          const targetElement = document.getElementById(targetId);
+
+          if (targetElement) {
+            targetElement.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        } else {
+          // Scroll to top for "All Categories"
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        }
+      });
+    }
+  });
+</script>

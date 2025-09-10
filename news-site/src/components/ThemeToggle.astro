@@ -1,0 +1,164 @@
+---
+interface Props {
+  class?: string
+}
+
+const { class: className = "" } = Astro.props
+---
+
+<button
+  class={`theme-toggle relative flex items-center justify-center p-2 rounded-lg bg-foreground/10 hover:bg-foreground/20 transition-colors ${className}`}
+  aria-label="Toggle theme"
+  title="Toggle light/dark theme"
+>
+  <!-- Sun icon (shown in dark mode) -->
+  <svg
+    class="sun-icon absolute w-5 h-5 text-foreground transition-opacity duration-200"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    style="display: none;"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+    ></path>
+  </svg>
+
+  <!-- Moon icon (shown in light mode) -->
+  <svg
+    class="moon-icon absolute w-5 h-5 text-foreground transition-opacity duration-200"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    style="display: block;"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+    ></path>
+  </svg>
+</button>
+
+<script>
+  // Use a unique class instead of ID to handle multiple instances
+  document.addEventListener('DOMContentLoaded', () => {
+    const themeToggleButtons = document.querySelectorAll('.theme-toggle')
+
+    themeToggleButtons.forEach((button) => {
+      const sunIcon = button.querySelector('.sun-icon') as HTMLElement
+      const moonIcon = button.querySelector('.moon-icon') as HTMLElement
+
+      if (!sunIcon || !moonIcon) return
+
+      // Get theme configuration from HTML attributes
+      const html = document.documentElement
+      const lightTheme = html.dataset.lightTheme || 'one-light'
+      const darkTheme = html.dataset.darkTheme || 'one-dark-pro'
+
+      // Function to update icon visibility for this button
+      const updateIcons = (isDark: boolean) => {
+        if (isDark) {
+          sunIcon.style.display = 'block'
+          moonIcon.style.display = 'none'
+        } else {
+          sunIcon.style.display = 'none'
+          moonIcon.style.display = 'block'
+        }
+      }
+
+      // Function to get current theme preference
+      const getCurrentTheme = () => {
+        const stored = localStorage.getItem('theme-preference')
+        if (stored) return stored
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      }
+
+      // Function to apply theme
+      const applyTheme = (preference: string) => {
+        const isDark = preference === 'dark'
+        const theme = isDark ? darkTheme : lightTheme
+        html.dataset.theme = theme
+
+        // Update all theme toggle buttons
+        themeToggleButtons.forEach((btn) => {
+          const sun = btn.querySelector('.sun-icon') as HTMLElement
+          const moon = btn.querySelector('.moon-icon') as HTMLElement
+          if (sun && moon) {
+            if (isDark) {
+              sun.style.display = 'block'
+              moon.style.display = 'none'
+            } else {
+              sun.style.display = 'none'
+              moon.style.display = 'block'
+            }
+          }
+        })
+
+        localStorage.setItem('theme-preference', preference)
+      }
+
+      // Initialize theme for this button
+      const currentTheme = getCurrentTheme()
+      applyTheme(currentTheme)
+
+      // Handle toggle click
+      button.addEventListener('click', () => {
+        const current = getCurrentTheme()
+        const newTheme = current === 'dark' ? 'light' : 'dark'
+        applyTheme(newTheme)
+      })
+    })
+
+    // Listen for system preference changes (only if no stored preference)
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    mediaQuery.addEventListener('change', (e) => {
+      if (!localStorage.getItem('theme-preference')) {
+        const preference = e.matches ? 'dark' : 'light'
+        const isDark = preference === 'dark'
+        const html = document.documentElement
+        const lightTheme = html.dataset.lightTheme || 'one-light'
+        const darkTheme = html.dataset.darkTheme || 'one-dark-pro'
+        const theme = isDark ? darkTheme : lightTheme
+        html.dataset.theme = theme
+
+        // Update all buttons
+        document.querySelectorAll('.theme-toggle').forEach((btn) => {
+          const sun = btn.querySelector('.sun-icon') as HTMLElement
+          const moon = btn.querySelector('.moon-icon') as HTMLElement
+          if (sun && moon) {
+            if (isDark) {
+              sun.style.display = 'block'
+              moon.style.display = 'none'
+            } else {
+              sun.style.display = 'none'
+              moon.style.display = 'block'
+            }
+          }
+        })
+      }
+    })
+  })
+</script>
+
+<style>
+  .theme-toggle {
+    position: relative;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .sun-icon,
+  .moon-icon {
+    transition: opacity 0.2s ease;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+</style>

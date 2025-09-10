@@ -1,0 +1,38 @@
+{
+  "name": "news-site",
+  "description": "A modern news site built with Astro and Tailwind CSS",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "format": "prettier --write .",
+    "clean": "rm -rf dist .astro"
+  },
+  "dependencies": {
+    "@astrojs/markdown-remark": "^6.3.6",
+    "@astrojs/mdx": "^4.3.4",
+    "@astrojs/rss": "^4.0.12",
+    "@astrojs/sitemap": "^3.5.1",
+    "@astrojs/ts-plugin": "^1.10.4",
+    "@expressive-code/plugin-line-numbers": "^0.41.3",
+    "@fontsource-variable/jetbrains-mono": "^5.2.6",
+    "@tailwindcss/vite": "^4.1.12",
+    "astro": "^5.13.4",
+    "astro-expressive-code": "^0.41.3",
+    "color": "^5.0.0",
+    "date-fns": "^4.1.0",
+    "js-yaml": "^4.1.0",
+    "reading-time": "^1.5.0",
+    "rehype-autolink-headings": "^7.1.0",
+    "rehype-external-links": "^3.0.0",
+    "tailwindcss": "^4.1.12",
+    "typescript": "^5.9.2"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "prettier": "3.6.2",
+    "prettier-plugin-astro": "0.14.1"
+  }
+}

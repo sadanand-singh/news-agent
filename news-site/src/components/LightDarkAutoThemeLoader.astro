@@ -1,0 +1,28 @@
+<!--
+  This script enables automatic light/dark theme switching based on the user's system preference.
+  It must be loaded in the <head> to prevent theme flashing.
+-->
+<script>
+  (() => {
+    const lightTheme = document.documentElement.dataset.lightTheme
+    const darkTheme = document.documentElement.dataset.darkTheme
+    const themeMode = document.documentElement.dataset.themeMode
+
+    if (themeMode === 'light-dark-auto' && lightTheme && darkTheme) {
+      // Function to apply theme
+      const applyTheme = (isDark) => {
+        const theme = isDark ? darkTheme : lightTheme
+        document.documentElement.dataset.theme = theme
+      }
+
+      // Apply initial theme
+      applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches)
+
+      // Listen for changes
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+      mediaQuery.addEventListener('change', (e) => {
+        applyTheme(e.matches)
+      })
+    }
+  })()
+</script>

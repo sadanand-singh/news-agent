@@ -1,0 +1,159 @@
+---
+import NewsItem from './NewsItem.astro';
+import type { NewsItem as NewsItemType } from '~/utils/loadNewsData';
+import { slugify } from '~/utils/loadNewsData';
+
+export interface Props {
+  groupName: string;
+  newsItems: NewsItemType[];
+}
+
+const { groupName, newsItems } = Astro.props;
+---
+
+<section
+  id={`group-${slugify(groupName)}`}
+  class="news-group mb-12 scroll-mt-6"
+  data-group-name={groupName}
+>
+  <!-- Group Header -->
+  <div class="sticky top-0 bg-background z-10 py-4 mb-6 border-b border-separator">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-2xl font-bold text-heading1 mb-2">
+          {groupName}
+        </h2>
+      </div>
+      <div class="text-sm text-foreground/60">
+        {newsItems.length} article{newsItems.length !== 1 ? 's' : ''}
+      </div>
+    </div>
+  </div>
+
+  <!-- News Items -->
+  <div class="news-items-container">
+    <!-- Initial items (show first 3) -->
+    <div class="initial-items">
+      {newsItems.slice(0, 3).map((item, itemIndex) => (
+        <NewsItem item={item} index={itemIndex} groupName={groupName} />
+      ))}
+    </div>
+
+    <!-- Lazy loaded items (if more than 3) -->
+    {newsItems.length > 3 && (
+      <div class="lazy-items hidden">
+        {newsItems.slice(3).map((item, itemIndex) => (
+          <NewsItem item={item} index={itemIndex + 3} groupName={groupName} />
+        ))}
+      </div>
+    )}
+
+    <!-- Load more trigger -->
+    {newsItems.length > 3 && (
+      <div class="load-more-trigger text-center py-6">
+        <button
+          class="load-more-btn bg-accent text-background px-6 py-2 rounded-lg hover:bg-accent/90 transition-colors duration-200 font-medium"
+          data-group={slugify(groupName)}
+        >
+          Load More ({newsItems.length - 3} more articles)
+        </button>
+      </div>
+    )}
+  </div>
+</section>
+
+<script>
+  // Intersection Observer for lazy loading
+  document.addEventListener('DOMContentLoaded', () => {
+    // Load more functionality
+    const loadMoreButtons = document.querySelectorAll('.load-more-btn');
+
+    loadMoreButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const groupSlug = button.getAttribute('data-group');
+        const section = document.querySelector(`#group-${groupSlug}`);
+
+        if (section) {
+          const lazyItems = section.querySelector('.lazy-items');
+          const loadMoreTrigger = section.querySelector('.load-more-trigger') as HTMLElement;
+
+          if (lazyItems && loadMoreTrigger) {
+            // Show lazy items with animation
+            lazyItems.classList.remove('hidden');
+
+            // Show items immediately without animation
+            const newsItems = lazyItems.querySelectorAll('.news-item');
+            newsItems.forEach((item) => {
+              (item as HTMLElement).style.opacity = '1';
+              (item as HTMLElement).style.transform = 'none';
+            });
+
+            // Hide the load more button smoothly
+            loadMoreTrigger.classList.add('hidden');
+          }
+        }
+      });
+    });
+
+    // Intersection Observer for automatic loading when scrolling near the bottom of a group
+    const observerOptions = {
+      root: null,
+      rootMargin: '200px',
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const trigger = entry.target as HTMLElement;
+          const button = trigger.querySelector('.load-more-btn') as HTMLButtonElement;
+
+          if (button && !button.disabled) {
+            // Auto-load after 1 second of being in view
+            setTimeout(() => {
+              if (entry.isIntersecting) {
+                button.click();
+              }
+            }, 1000);
+          }
+        }
+      });
+    }, observerOptions);
+
+    // Observe all load more triggers
+    document.querySelectorAll('.load-more-trigger').forEach(trigger => {
+      observer.observe(trigger);
+    });
+  });
+</script>
+
+<style>
+  /* Remove all animations - static display only */
+  .news-group {
+    opacity: 1;
+    transform: none;
+  }
+
+  .lazy-items .news-item {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Ensure consistent heights to prevent layout shifts */
+  .news-items-container {
+    min-height: 200px;
+  }
+
+  .load-more-trigger {
+    height: 80px; /* Fixed height to prevent jumping when hidden */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease-out;
+  }
+
+  .load-more-trigger.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+</style>

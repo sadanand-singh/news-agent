@@ -1,0 +1,204 @@
+---
+import { slugify } from '~/utils/loadNewsData';
+import ThemeToggle from '~/components/ThemeToggle.astro';
+
+export interface Props {
+  groups: string[];
+  currentGroup?: string;
+}
+
+const { groups, currentGroup } = Astro.props;
+---
+
+<aside class="hidden lg:block lg:w-64 bg-background lg:border-r lg:border-separator lg:shadow-xl lg:fixed lg:inset-y-0 lg:left-0 lg:z-20 lg:overflow-y-auto">
+  <div class="px-4 py-6">
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between mb-2">
+        <h1 class="text-xl font-bold text-heading1">📰 News Site</h1>
+        <ThemeToggle />
+      </div>
+      <p class="text-sm text-foreground/60">Latest updates across technology, science, and global events</p>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="space-y-1">
+      <a
+        id="nav-link-top"
+        href="#top"
+        class="block px-3 py-2 text-sm font-medium rounded-md transition-colors text-foreground hover:bg-accent/10 hover:text-accent"
+      >
+        All News
+      </a>
+
+      {groups.map((group) => (
+        <a
+          id={`nav-link-${slugify(group)}`}
+          href={`#group-${slugify(group)}`}
+          class="block px-3 py-2 text-sm font-medium rounded-md transition-colors text-foreground hover:bg-accent/10 hover:text-accent"
+          data-group={group}
+          data-group-slug={slugify(group)}
+        >
+          {group}
+        </a>
+      ))}
+    </nav>
+  </div>
+</aside>
+
+<script>
+    // Sidebar navigation functionality
+  document.addEventListener('DOMContentLoaded', () => {
+
+    // Enhanced smooth scrolling for anchor links with responsive offset
+    document.querySelectorAll('a[href^="#group-"]').forEach((anchor) => {
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        const href = (anchor as HTMLAnchorElement).getAttribute('href');
+
+        if (href) {
+          const target = document.querySelector(href);
+          if (target) {
+                        // Calculate offset for smooth scrolling
+            const offset = 80; // Fixed offset for large screens only
+
+            const elementPosition = target.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+
+            // Update URL
+            history.pushState(null, '', href);
+
+            // Removed temporary highlight effect
+          }
+        }
+      });
+    });
+
+    // Handle "All News" link
+    document.querySelector('a[href="#top"]')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+      history.pushState(null, '', '#top');
+    });
+
+    // Active section highlighting
+    const navLinks = document.querySelectorAll('nav a[id^="nav-link-"]');
+    const sections = document.querySelectorAll('section[id^="group-"], #top');
+
+    // Function to update active nav link
+    function updateActiveNavLink(activeId: string) {
+      navLinks.forEach(link => {
+        const linkId = link.getAttribute('id');
+        if (linkId === `nav-link-${activeId}`) {
+          link.classList.remove('text-foreground', 'hover:bg-accent/10', 'hover:text-accent');
+          link.classList.add('bg-accent', 'text-background', 'font-semibold');
+        } else {
+          link.classList.remove('bg-accent', 'text-background', 'font-semibold');
+          link.classList.add('text-foreground', 'hover:bg-accent/10', 'hover:text-accent');
+        }
+      });
+    }
+
+    // Intersection Observer for active section tracking
+    const observerOptions = {
+      root: null,
+      rootMargin: '-20% 0px -70% 0px', // Trigger when section is 20% from top
+      threshold: 0
+    };
+
+    const activeObserver = new IntersectionObserver((entries) => {
+      let activeSection = '';
+
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const sectionId = entry.target.id;
+          if (sectionId === 'top') {
+            activeSection = 'top';
+          } else if (sectionId.startsWith('group-')) {
+            activeSection = sectionId.replace('group-', '');
+          }
+        }
+      });
+
+      // Handle edge case when at very top of page
+      if (window.scrollY < 100) {
+        activeSection = 'top';
+      }
+
+      if (activeSection) {
+        updateActiveNavLink(activeSection);
+      }
+    }, observerOptions);
+
+    // Observe all sections
+    sections.forEach(section => {
+      activeObserver.observe(section);
+    });
+
+    // Handle initial page load with hash
+    window.addEventListener('load', () => {
+      if (window.location.hash) {
+        const hash = window.location.hash.substring(1);
+        if (hash === 'top') {
+          updateActiveNavLink('top');
+        } else if (hash.startsWith('group-')) {
+          updateActiveNavLink(hash.replace('group-', ''));
+        }
+      } else {
+        updateActiveNavLink('top');
+      }
+    });
+
+    // Handle scroll to update active section
+    let scrollTimeout: number;
+    window.addEventListener('scroll', () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = window.setTimeout(() => {
+        // If we're at the very top, highlight "All News"
+        if (window.scrollY < 100) {
+          updateActiveNavLink('top');
+        }
+      }, 100);
+    });
+  });
+</script>
+
+<style>
+  /* Sidebar subtle gradient edge */
+  aside::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg,
+      rgba(55, 65, 81, 0) 0%,
+      rgba(55, 65, 81, 0.5) 30%,
+      rgba(55, 65, 81, 0.5) 70%,
+      rgba(55, 65, 81, 0) 100%
+    );
+  }
+
+  /* Removed highlight effect */
+
+  /* Active nav link styling */
+  nav a.active {
+    background-color: var(--color-accent);
+    color: var(--color-background);
+    font-weight: 600;
+  }
+
+  /* Smooth transitions for nav links */
+  nav a {
+    transition: all 0.2s ease-in-out;
+  }
+</style>

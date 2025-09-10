@@ -1,0 +1,92 @@
+@import 'tailwindcss';
+
+/* https://fontsource.org/fonts/jetbrains-mono/install */
+/* jetbrains-mono-latin-wght-normal */
+@font-face {
+  font-family: 'JetBrains Mono Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 800;
+  src: url(@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2)
+    format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@theme {
+  --color-accent: var(--theme-accent);
+  --color-foreground: var(--theme-foreground);
+  --color-background: var(--theme-background);
+  --color-heading1: var(--theme-heading1);
+  --color-heading2: var(--theme-heading2);
+  --color-heading3: var(--theme-heading3);
+  --color-heading4: var(--theme-heading4);
+  --color-heading5: var(--theme-heading5);
+  --color-heading6: var(--theme-heading6);
+  --color-list: var(--theme-list);
+  --color-link: var(--theme-link);
+  --color-separator: var(--theme-separator);
+  --color-note: var(--theme-note);
+  --color-tip: var(--theme-tip);
+  --color-important: var(--theme-important);
+  --color-caution: var(--theme-caution);
+  --color-warning: var(--theme-warning);
+  --color-blue: var(--theme-blue);
+  --color-green: var(--theme-green);
+  --color-red: var(--theme-red);
+  --color-yellow: var(--theme-yellow);
+  --color-magenta: var(--theme-magenta);
+  --color-cyan: var(--theme-cyan);
+  --default-font-family: var(--theme-font), monospace;
+  --default-mono-font-family: var(--theme-font), monospace;
+}
+
+* {
+  /* Custom scrollbar styles */
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--color-accent) 20%, transparent) transparent;
+}
+
+html {
+  /* Slightly more accented scrollbar for better visibility */
+  scrollbar-color: color-mix(in oklab, var(--color-accent) 30%, transparent) transparent !important;
+  /* Prevents layout from jumping when opening theme select or search dialog menus */
+  scrollbar-gutter: stable;
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply transition-colors;
+  font-display: block;
+  font-family: var(--default-font-family);
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+button:focus-visible,
+a:focus-visible,
+input:active,
+textarea:active,
+select:active,
+button:active {
+  @apply outline-1 outline-accent outline-offset-2;
+}
+
+a,
+button {
+  @apply hover:cursor-pointer;
+}
+
+a {
+  @apply underline-offset-2;
+}
+
+a.button {
+  @apply inline-flex text-accent border-3 border-accent/30 border-double py-1.5 px-3 whitespace-nowrap hover:bg-accent/8 rounded-xl transition-colors;
+}
+
+button {
+  @apply cursor-pointer;
+}
