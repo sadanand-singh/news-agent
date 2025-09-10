@@ -27,9 +27,9 @@ embeddings:
 
 # News Agent Specific Settings
 news_agent:
-  topics_file: "$HOME/Develop/news-agent/news_agent/agents/news/topics.yaml"
-  output_dir: "$HOME/Develop/news-agent/news_agent/agents/news/output"
-  news_dest_file: "$HOME/Develop/news-site/src/data/news.yaml"
+  topics_file: "news_agent/agents/news/topics.yaml"
+  output_dir: "news_agent/agents/news/output"
+  news_dest_file: "news-site/src/data/news.yaml"
   similarity_threshold: 0.95
   max_writing_tokens: 16000
 
