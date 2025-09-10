@@ -1,0 +1,42 @@
+# News Agent Local Configuration Example
+# Copy this file to news.config.yaml and update with your actual API keys
+
+# API Keys and Authentication
+api_keys:
+  openai_api_key: "sk-your-openai-key-here"
+  anthropic_api_key: "sk-ant-your-anthropic-key-here"
+  google_api_key: "your-google-key-here"
+  brave_api_key: "your-brave-key-here"
+  tavily_api_key: "your-tavily-key-here"
+  aws_access_key_id: ""
+  aws_secret_access_key: ""
+  langchain_api_key: "your-langchain-api-key-here"
+  llamaindex_api_key: "your-llamaindex-api-key-here"
+  langfuse_public_key: "your-langfuse-public-key-here"
+  langfuse_secret_key: "your-langfuse-secret-key-here"
+
+# Model Configuration
+models:
+  provider: "openai"
+  name: "gpt-5-mini-2025-08-07"
+
+# Embedding Configuration
+embeddings:
+  provider: "ollama" # other option is openai
+  model_name: "bge-large" # when openai, it should be one of `text-embedding-3-small` OR `text-embedding-3-large`
+
+# News Agent Specific Settings
+news_agent:
+  topics_file: "$HOME/Develop/news-agent/news_agent/agents/news/topics.yaml"
+  output_dir: "$HOME/Develop/news-agent/news_agent/agents/news/output"
+  news_dest_file: "$HOME/Develop/news-site/src/data/news.yaml"
+  similarity_threshold: 0.95
+  max_writing_tokens: 16000
+
+# Langfuse Configuration
+langfuse:
+  enabled: false
+
+# LangChain Configuration
+langchain:
+  tracing_v2: false

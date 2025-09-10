@@ -1,0 +1,69 @@
+# Review Writer Agent Local Configuration Example
+# Copy this file to review_writer.config.yaml and update with your actual API keys
+
+# API Keys and Authentication
+api_keys:
+  openai_api_key: "sk-your-openai-key-here"
+  anthropic_api_key: "sk-ant-your-anthropic-key-here"
+  google_api_key: "your-google-key-here"
+  brave_api_key: "your-brave-key-here"
+  tavily_api_key: "your-tavily-key-here"
+  aws_access_key_id: ""
+  aws_secret_access_key: ""
+  langchain_api_key: "your-langchain-api-key-here"
+  llamaindex_api_key: "your-llamaindex-api-key-here"
+  langfuse_public_key: "your-langfuse-public-key-here"
+  langfuse_secret_key: "your-langfuse-secret-key-here"
+
+# Model Configuration
+models:
+  main_model:
+    provider: "openai"
+    name: "gpt-4.1-2025-04-14"
+
+  small_model:
+    provider: "openai"
+    name: "gpt-5-mini-2025-08-07"
+
+  fix_model:
+    provider: "openai"
+    name: "gpt-4.1-2025-04-14"
+
+# Embedding Configuration
+embeddings:
+  provider: "ollama"
+  model_name: "bge-large"
+
+# Search Tools Configuration
+search_tools:
+  toc_search_tools: "tavily"
+  section_writer_search_tools: "brave,tavily,arxiv"
+  section_refine_search_tools: "tavily,brave"
+
+# Review Writer Specific Settings
+review_writer:
+  skip_latex_review: false
+  tex_file: "$HOME/Develop/news-agent/.runs/main.tex"
+  bib_file: "$HOME/Develop/news-agent/.runs/ref.bib"
+  pdf_file: "$HOME/Develop/news-agent/.runs/main.pdf"
+  max_writing_tokens: 16000
+  max_rewrite_tokens: 32000
+  max_refine_tokens: 16000
+
+# Langfuse Configuration
+langfuse:
+  enabled: false
+
+# LangChain Configuration
+langchain:
+  tracing_v2: false
+
+# Cache Configuration
+cache:
+  enabled: true
+  path: "$HOME/Develop/news-agent/.runs/cache/cache3.db"
+  ttl: 360000000
+
+# Arxiv MCP Configuration
+arxiv:
+  storage_path: "$HOME/Downloads/papers"

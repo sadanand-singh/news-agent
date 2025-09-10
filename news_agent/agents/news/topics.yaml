@@ -1,0 +1,99 @@
+US:
+  groups: ['US']
+  news: []
+UK, EU, Russia, China, India, Brazil, South America, Africa, Australia, New Zealand, Canada, Mexico, World:
+  groups: ['World']
+  news: []
+India:
+  groups: ['India', 'World']
+  news: []
+AI, Gemini, Anthropic, OpenAI, GenAI, Alibaba, Agents, Nvidia, Llama, Qwen, Deepseek:
+  groups: ['Technology', 'AI']
+  news: []
+Reinforcement Learning, Deep Learning, Machine Learning, Neural Networks, Transformers:
+  groups: ['AI', 'Technology']
+  news: []
+Generative Pre-trained Transformers (GPT), Large Language Models (LLMs):
+  groups: ['Technology', 'AI']
+  news: []
+Object Detection, Object Segmentation, Object Tracking, Object Recognition, Object Classification:
+  groups: ['Technology', 'AI']
+  news: []
+Image Generation, Multi-Modal, Inference, Fine-tuning, Prompt Engineering:
+  groups: ['Technology', 'AI']
+  news: []
+Robotics:
+  groups: ['Technology']
+  news: []
+Blockchain and Quantum Computing:
+  groups: ['Technology']
+  news: []
+Hardware and Software:
+  groups: ['Technology']
+  news: []
+Medical Imaging, Devices and Robotics:
+  groups: ['Health', 'Technology']
+  news: []
+Apple, Google, Microsoft, Meta, Amazon and other Tech Companies:
+  groups: ['Technology']
+  news: []
+Space Programs, SpaceX, NASA, ISRO, ESA, China Space Program, Japan Space Program:
+  groups: ['Technology', 'Space']
+  news: []
+DNA, RNA, Protein, Genomics, Genetic Engineering:
+  groups: ['Science', 'Technology']
+  news: []
+Mobile OS, iOS and Android, Mobile Apps, Mobile Games, Mobile Development:
+  groups: ['Technology']
+  news: []
+Windows OS, Linux, MacOS, ChromeOS, Search Engines, Browsers, Operating Systems:
+  groups: ['Technology']
+  news: []
+Fitness, Wellness, Nutrition, Diet, Exercise, Sleep, Stress, Health:
+  groups: ['Health']
+  news: []
+Vaccines, Biotechnology, Genomics and Genetic Engineering:
+  groups: ['Science']
+  news: []
+Semiconductor Manufacturing, Packaging, Testing:
+  groups: ['Technology']
+  news: []
+Intel, AMD, Nvidia, TSMC, Samsung, Micron, SK Hynix, Qualcomm, MediaTek:
+  groups: ['Technology']
+  news: []
+ARM, Qualcomm, MediaTek, Samsung, Apple:
+  groups: ['Technology']
+  news: []
+Cryptocurrency:
+  groups: ['Business', 'Finance']
+  news: []
+Economy and Markets:
+  groups: ['Business', 'Finance']
+  news: []
+Tech Companies Business:
+  groups: ['Business', 'Technology']
+  news: []
+FDA and Health care companies:
+  groups: ['Business', 'Health']
+  news: []
+US Stock Market:
+  groups: ['Business', 'Finance']
+  news: []
+Indian Stock Market - NSE, BSE, Nifty, Sensex:
+  groups: ['Business', 'Finance']
+  news: []
+UK and Europe Stock Market:
+  groups: ['Business', 'Finance']
+  news: []
+China, Japan, South Korea and Taiwan Stock Market:
+  groups: ['Business', 'Finance']
+  news: []
+Python, C++, Rust, Go, Programming Languages, JavaScript, HTML, CSS, React, Angular, Vue, Web Development:
+  groups: ['Technology']
+  news: []
+Climate change, Sustainability, Solar, Wind, Hydrogen, Renewable Energy, Fossil Fuels:
+  groups: ['Science', 'Technology', 'Climate']
+  news: []
+CO2 emissions, Carbon capture, sequestration, offset, Carbon-neutral, Carbon-footprint:
+  groups: ['Science', 'Technology', 'Climate']
+  news: []

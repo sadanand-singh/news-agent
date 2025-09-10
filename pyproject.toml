@@ -1,0 +1,50 @@
+[project]
+name = "news-agent"
+version = "0.1.0"
+description = "Agentic AI for News"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "arxiv>=2.2.0",
+    "brave-search-python-client>=0.4.27",
+    "duckduckgo-search>=8.0.4",
+    "httpx>=0.28.1",
+    "langchain-anthropic>=0.3.16",
+    "langchain-aws>=0.2.27",
+    "langchain-community>=0.3.26",
+    "langchain-core>=0.3.66",
+    "langchain-google-genai>=2.1.5",
+    "langchain-mcp-adapters>=0.1.8",
+    "langchain-milvus>=0.2.0",
+    "langchain-neo4j>=0.4.0",
+    "langchain-ollama>=0.3.3",
+    "langchain-openai>=0.3.27",
+    "langchain-tavily>=0.2.5",
+    "langfuse>=3.0.7",
+    "langgraph>=0.5.0",
+    "langgraph-checkpoint-sqlite>=2.0.10",
+    "langgraph-cli[inmem]>=0.3.3",
+    "langgraph-prebuilt>=0.5.1",
+    "langgraph-sdk>=0.1.72",
+    "langsmith>=0.4.4",
+    "milvus>=2.3.9",
+    "neo4j>=5.28.1",
+    "notebook>=7.4.3",
+    "ollama>=0.5.1",
+    "python-dotenv>=1.1.1",
+    "pyyaml>=6.0.2",
+    "requests>=2.32.4",
+    "tavily-python>=0.7.8",
+    "trustcall>=0.0.39",
+    "wikipedia>=1.4.0",
+]
+
+[dependency-groups]
+dev = [
+    "news-agent",
+    "ipykernel>=6.29.5",
+    "uv>=0.7.15",
+]
+
+[tool.uv.sources]
+news-agent = { workspace = true }
