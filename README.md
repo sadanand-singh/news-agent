@@ -53,49 +53,53 @@ api_keys:
   google_api_key: "your-key-here"
   brave_api_key: "your-key-here"
   tavily_api_key: "your-key-here"
+  aws_access_key_id: ""
+  aws_secret_access_key: ""
+  langchain_api_key: "your-key-here"
+  llamaindex_api_key: "your-key-here"
+  langfuse_public_key: "your-key-here"
+  langfuse_secret_key: "your-key-here"
 ```
 
 #### Model Configuration
 
 ```yaml
 models:
-  main_model:
-    provider: "google"  # openai, anthropic, google, ollama
-    name: "gemini-2.0-flash-exp"
-    temperature: 0.0
-    max_tokens: 16000
+  provider: "openai"
+  name: "gpt-5-mini-2025-08-07"
+```
 
-  small_model:
-    provider: "google"
-    name: "gemini-2.0-flash-exp"
-    temperature: 0.0
-    max_tokens: 8000
+#### Embedding Configuration
+
+```yaml
+embeddings:
+  provider: "ollama"
+  model_name: "bge-large"
 ```
 
 #### News Agent Settings
 
 ```yaml
 news_agent:
-  topics_file: "news_agent/agents/news/topics.yaml"
-  output_dir: "news_agent/agents/news/output"
-  max_items_per_topic: 30
-  max_writing_tokens: 16000
+  topics_file: "/Users/sadanand/Develop/news-agent/news_agent/agents/news/topics.yaml"
+  output_dir: "/Users/sadanand/Develop/news-agent/news_agent/agents/news/output"
+  news_dest_file: "/Users/sadanand/Develop/news-site/src/data/news.yaml"
   similarity_threshold: 0.95
+  max_writing_tokens: 16000
 ```
 
-#### Search Tools Configuration
+#### Langfuse Configuration
 
 ```yaml
-search_tools:
-  brave:
-    count: 8
-    freshness: "pw"  # pd, pw, pm, py
+langfuse:
+  enabled: false
+```
 
-  tavily:
-    max_results: 8
-    topic: "news"
-    days: 2
-    search_depth: "basic"
+#### LangChain Configuration
+
+```yaml
+langchain:
+  tracing_v2: false
 ```
 
 ### Security Notes
@@ -124,16 +128,16 @@ config.set_env_vars()
 ### Run the News Agent
 
 ```bash
-python run_news_agent.py
+python main.py
 ```
 
 This will:
 
-- Read topics from `news_agent/agents/news/topics.yaml`
-- Collect up to 30 news items per topic
-- Apply date filters based on topic groups (Politics: 2 days, Technology: 4 days, Science/Health: 7 days)
-- Save results to `news_agent/agents/news/output/`
-- output will also be copied to `news-site/src/data/news.yaml` for deployment - This is controlled via `news_agent.news_dest_file` option in the config file
+- Read topics from the configured topics file
+- Collect news items using the configured search tools
+- Apply deduplication using the configured similarity threshold
+- Save results to the configured output directory
+- Copy output to the news site data file for deployment (controlled via `news_agent.news_dest_file`)
 
 ### Programmatic Usage
 
