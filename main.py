@@ -69,7 +69,7 @@ async def stream_example():
 
 if __name__ == '__main__':
     # Run the main news collection
-    asyncio.run(main())
+    # asyncio.run(main())
 
     # Or run with streaming
-    # asyncio.run(stream_example())
+    asyncio.run(stream_example())
